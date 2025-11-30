@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AlertCircle, Skull, ChevronRight } from 'lucide-react';
 
+interface Question {
+  question: string;
+  answers: string[];
+  correct: number;
+}
+
 const ScaryPhysicsQuest = () => {
-  const [activeTab, setActiveTab] = useState('area');
+  const [activeTab, setActiveTab] = useState<'area' | 'volume'>('area');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   // Генерация вопросов для площади
   const generateAreaQuestions = () => {
@@ -102,9 +108,9 @@ const ScaryPhysicsQuest = () => {
   };
 
   // Генерация вариантов ответов
-  const generateAnswers = (correct) => {
+  const generateAnswers = (correct: number) => {
     // Округляем правильный ответ до значащих цифр
-    const roundToSignificant = (num, sig = 2) => {
+    const roundToSignificant = (num: number, sig = 2) => {
       if (num === 0) return 0;
       const mult = Math.pow(10, sig - Math.floor(Math.log10(Math.abs(num))) - 1);
       return Math.round(num * mult) / mult;
@@ -134,12 +140,12 @@ const ScaryPhysicsQuest = () => {
   };
 
   // Форматирование чисел
-  const formatNumber = (num) => {
+  const formatNumber = (num: number) => {
     if (num >= 1000000 || num <= 0.0001) {
       const exp = Math.floor(Math.log10(Math.abs(num)));
       const mantissa = num / Math.pow(10, exp);
-      const superscript = (n) => {
-        const chars = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
+      const superscript = (n: number) => {
+        const chars: { [key: string]: string } = {'-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹'};
         return n.toString().split('').map(c => chars[c] || c).join('');
       };
       return `${mantissa.toFixed(1).replace('.', ',')}×10${superscript(exp)}`;
@@ -160,7 +166,7 @@ const ScaryPhysicsQuest = () => {
     setShowResult(false);
   }, [activeTab]);
 
-  const handleAnswer = (index) => {
+  const handleAnswer = (index: number) => {
     if (selectedAnswer !== null) return;
     
     setSelectedAnswer(index);
@@ -250,7 +256,7 @@ const ScaryPhysicsQuest = () => {
 
               {/* Варианты ответов */}
               <div className="grid grid-cols-2 gap-4">
-                {questions[currentQuestion].answers.map((answer, index) => (
+                {questions[currentQuestion].answers.map((answer: string, index: number) => (
                   <button
                     key={index}
                     onClick={() => handleAnswer(index)}
